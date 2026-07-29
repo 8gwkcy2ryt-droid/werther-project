@@ -41,7 +41,7 @@
     </section>
 
     <!-- 홈 화면: 주요 도시 리스트 + 세계 리스트 -->
-    <div id="screen-home" class="screen">
+    <div id="screen-home" class="screen" hidden>
         <div class="page-content">
             <div class="page-content-inner">
                 <div class="home-top">
@@ -60,20 +60,23 @@
                         <h2 class="section-title">오늘의 전국 최고/최저</h2>
                         <div id="extremRow" class="extream-row">
                             <button type="button" class="extream-card">
-                                <span class="extream-label">🔥오늘 가장 더운 곳</span>
+                                <span class="extream-label">🔥 오늘 가장 더운 곳</span>
                                 <span class="extream-value">강릉 39°</span>
                             </button>
                             <button type="button" class="extream-card">
-                                <span class="extream-label">❄️오늘 가장 추운 곳</span>
+                                <span class="extream-label">❄️ 오늘 가장 추운 곳</span>
                                 <span class="extream-value">대전 23°</span>
                             </button>
                         </div>
                     </div>
-
                 </div>
 
+                <!-- 주요 도시 날씨 -->
                 <h2 class="section-title">주요 도시 날씨</h2>
-                <div id="citylist" class="city-list">
+
+                <!-- 임시 데이터 3개로 마크업 및 스타일 -->
+                <div id="cityList" class="city-list">
+                    <!-- 첫 번째 도시 -->
                     <button type="button" class="city-row">
                         <span class="city-row-name">서울</span>
                         <span class="city-row-weather">
@@ -83,34 +86,53 @@
                         </span>
                     </button>
 
+                    <!-- 두 번째 도시 -->
                     <button type="button" class="city-row">
-                        <span class="city-row-name">광주</span>
+                        <span class="city-row-name">서울</span>
                         <span class="city-row-weather">
-                            <img src="./icons/snow.svg" alt="" class="city-row-icon">
-                            <span class="city-row-temp">14°</span>
+                            <img src="./icons/rain.svg" alt="" class="city-row-icon">
+                            <span class="city-row-temp">28°</span>
                             <span class="city-row-chevron">›</span>
                         </span>
                     </button>
 
+                    <!-- 세 번째 도시 -->
                     <button type="button" class="city-row">
-                        <span class="city-row-name">부산</span>
+                        <span class="city-row-name">서울</span>
                         <span class="city-row-weather">
-                            <img src="./icons/cloudy.svg" alt="" class="city-row-icon">
-                            <span class="city-row-temp">24°</span>
+                            <img src="./icons/rain.svg" alt="" class="city-row-icon">
+                            <span class="city-row-temp">28°</span>
                             <span class="city-row-chevron">›</span>
                         </span>
                     </button>
-
                 </div>
 
-
-                <div class="footer-home"></div>
+                <div class="footer-home">
+                    <p>Data by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a></p>
+                    <p>미래유망 강사 김기호</p>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- 디테일 화면: 주간 날씨 + 시간별 날씨 -->
-    <div id="screen-detail" class="screen" hidden></div>
+    <div id="screen-detail" class="screen screen-detail">
+        <header class="detail-header">
+            <button type="button" id="backBtn" class="back-btn">← 목록으로</button>
+        </header>
+
+        <div class="app">
+            <main>
+                <!-- 로딩/에러 관련 메세지 -->
+                <!-- role="status": 내용이 바뀌면 스크린리더가 자동으로 읽어줌 -->
+                <p id="statusMsg" class="status-msg" role="status" hidden>
+                    날씨 정보를 불러는 중...
+                </p>
+
+
+            </main>
+        </div>
+    </div>
 
 </body>
 

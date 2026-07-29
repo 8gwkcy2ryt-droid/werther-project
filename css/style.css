@@ -9,7 +9,7 @@
          흰 배경 대비 5.2:1 확보 */
       --color-accent:  #2e6cc4;
       --card-bg:       rgba(255, 255, 255, 0.94);
-      --home-bg: #eef1f5;
+      --home-bg:       #eef1f5;
       /* 글자 크기 5단계 — 숫자 대신 단계 이름으로 관리 */
       --fs-xs:   0.8rem;    /* 작은 라벨 (체감/습도 라벨, 배지, 푸터) */
       --fs-sm:   0.85rem;   /* 보조 텍스트 (상태 문구, 일출일몰) */
@@ -59,7 +59,7 @@ body {
   background: linear-gradient(160deg, var(--bg-start), var(--bg-end));
   transition: background 0.6s ease;
 }
- 
+
 :focus-visible {
     outline: 3px solid var(--color-accent);
     outline-offset: 2px;
@@ -69,14 +69,19 @@ body {
 .city-row-icon,
 .forecast-con,
 .hour-icon {
-    background: linear-gradient(160deg, rgba(111,177,252,0.3),rgba(77,110,247,0.16));
+    background: linear-gradient(
+                    160deg, 
+                    rgba(111,177,252,0.3), 
+                    rgba(77, 110, 247, 0.16)
+                    );
     border-radius: 50%;
 }
 
-
-
-
-
+/* ----------------------------------------- */
+/* 홈 히어로 */
+/*   - 하늘 사진 또는 배경색 */
+/*   - 도시 검색 */
+/* ----------------------------------------- */
 .hero-photo {
     display: flex;
     justify-content: center;
@@ -84,28 +89,31 @@ body {
     min-height: 320px;
     padding: var(--sp-3xl) var(--sp-xl);
 
+    /* [선택]배경 이미지 추가 */
     background: linear-gradient(
-        rgba(10,14,20,0.45),
-        rgba(10,14,20,0.15));
-    
+                rgba(10, 14, 20, 0.45), 
+                rgba(10, 14, 20, 0.15)
+                );
 }
 .hero-inner {
     width: 100%;
     max-width: 480px;
     text-align: center;
     color: var(--color-white);
-    text-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 .hero-title {
     font-size: var(--fs-hero);
     font-weight: 900;
     line-height: 1.25;
 }
+
 .search-form {
     display: flex;
     gap: var(--sp-sm);
-    margin-top:var(--sp-xl);
+    margin-top: var(--sp-xl);
 }
+
 .search-form input {
     flex: 1;
     padding: var(--sp-lg) var(--sp-xl);
@@ -119,6 +127,7 @@ body {
 .search-form input::placeholder {
     color: var(--color-ink-sub);
 }
+
 .search-form button {
     padding: var(--sp-lg) var(--sp-xl);
     border: none;
@@ -131,29 +140,28 @@ body {
     cursor: pointer;
     transition: 200ms;
 }
+.search-form button:hover { opacity: 0.85; }
 
-.search-form button:hover {opacity: 0.09;}
 
+/* 홈 컨텐츠 영역 */
 .page-content {
     background: var(--home-bg);
     padding: var(--sp-2xl) var(--sp-lg) var(--sp-4xl);
 }
-
 .page-content-inner {
-    max-width: 400px;
+    max-width: 480px;
     margin: 0 auto;
 }
-
 .section-title {
-    font-size: var(--fs-base);
+    font-size:var(--fs-base);
     font-weight: 700;
     margin: var(--sp-2xl) var(--sp-lg);
 }
 
-
+/* 내 위치 날씨 */
 .my-location-btn {
     width: 100%;
-    border: 1px dashed rgba(37,49,60,0.3);
+    border: 1px dashed rgba(38, 49, 60, 0.3);
     background-color: transparent;
     border-radius: var(--radius-md);
     padding: var(--sp-lg);
@@ -162,9 +170,8 @@ body {
     cursor: pointer;
     transition: 200ms;
 }
-
 .my-location-btn:hover {
-    background-color: rgba(255,255,2550.7);
+    background-color: rgba(255, 255, 255, 0.7);
     color: var(--color-ink);
 }
 .my-location-hint {
@@ -173,18 +180,17 @@ body {
     font-size: var(--fs-xs);
     color: var(--color-ink-sub);
 }
-
-.mt-location-msg {
+.my-location-msg {
     text-align: center;
     font-size: var(--fs-sm);
     color: var(--color-ink-sub);
     padding: var(--sp-md);
 }
 
-.extream-row{
+/* 전국 최고/최저 기온 */
+.extream-row {
     display: flex;
     gap: var(--sp-md);
-
 }
 .extream-card {
     flex: 1;
@@ -192,7 +198,7 @@ body {
     border: none;
     border-radius: var(--radius-md);
     padding: var(--sp-lg);
-    box-shadow: 0 4px 14px rgba(38,49,50,0.08);
+    box-shadow: 0 4px 14px rgba(38, 49, 60, 0.08);
     font-family: inherit;
     text-align: left;
     cursor: pointer;
@@ -200,22 +206,22 @@ body {
 }
 .extream-card:hover {
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(37,49,60,0.12);
+    box-shadow: 0 8px 20px rgba(38, 49, 60, 0.12);
 }
 
-.extream-label {
+.extream-label { 
     display: block;
-    font-size: var(--fs-sm);
+    font-size: var(--fs-xs);
     color: var(--color-ink-sub);
 }
-
-.extream-value {
+.extream-value { 
     display: block;
     margin-top: var(--sp-sm);
     font-size: var(--fs-lg);
     font-weight: 700;
 }
 
+/* 주요 도시 리스트 */
 .city-list {
     display: flex;
     flex-direction: column;
@@ -231,7 +237,7 @@ body {
     border: none;
     border-radius: var(--radius-md);
     padding: var(--sp-lg) var(--sp-xl);
-    box-shadow: 0 4px 14px rgba(37,49,60,0.08);
+    box-shadow: 0 4px 14px rgba(38, 49, 60, 0.08);
     font-family: inherit;
     text-align: left;
     cursor: pointer;
@@ -239,7 +245,7 @@ body {
 }
 .city-row:hover {
     transform: translateY(-1px);
-    box-shadow: rgba(37,49,60,0.12);
+    box-shadow: rgba(38, 49, 60, 0.12);
 }
 .city-row-name {
     font-size: var(--fs-base);
@@ -255,8 +261,8 @@ body {
     height: 36px;
 }
 .city-row-temp {
-    font-weight: 800;
     font-size: var(--fs-lg);
+    font-weight: 800;
     min-width: 40px;
     text-align: right;
 }
@@ -266,8 +272,75 @@ body {
     color: var(--color-ink-sub);
 }
 
+/* 모바일 환경에서의 터치 반응 */
 .extream-card:active,
 .city-row:active {
     transform: scale(0.98);
     box-shadow: 0 2px 8px rgba(38, 49, 60, 0.1);
+}
+
+.footer-home {
+    margin-top: var(--sp-xl);
+    text-align: center;
+    font-size: var(--fs-xs);
+    color: var(--color-ink-sub);
+    line-height: 1.6;
+}
+.footer-home a {
+    color: var(--color-ink);
+}
+
+/* ------------------------------------------------------ */
+/* 디테일 화면 */
+/* ------------------------------------------------------ */
+
+.screen-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sp-lg);
+    padding: var(--sp-xl) var(--sp-lg) var(--sp-4xl);
+}
+
+/* 앱 레퍼 */
+.app {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-xl);
+}
+
+/* 뒤로가기 */
+.detail-header {
+    width: 100%;
+    max-width: 480px;
+}
+
+.back-btn {
+    border: none;
+    background-color: rgba(255, 255, 255, 0.25);
+    color: var(--color-white);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: var(--fs-md);
+    padding: var(--sp-md) var(--sp-xl);
+    min-height: 44px;
+    border-radius: 1000px;
+    cursor: pointer;
+}
+
+.back-btn:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+/* 로딩/에러 관련 메세지 */
+.status-msg {
+    background-color: var(--card-bg);
+    border-radius: var(--radius-lg);
+    padding: var(--sp-4xl) var(--sp-2xl);
+    text-align: center;
+    color: var(--color-ink-sub);
+    font-size: var(--fs-base);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
 }
