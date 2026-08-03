@@ -68,6 +68,19 @@ $(function () {
         return "위험";
     }
 
+    // 미세먼지(PM10), 초미세먼지(PM2.5) 농도 별 등급
+    //  - 한국 기준 4등급
+    const PM10_THRESHOLDS = [30, 80, 150];
+    const PM25_THRESHOLDS = [15, 35, 75];
+
+    function pmGrade(value, thresholds) {
+        if (value === null || value === undefined) return { label: '정보 없음', className: '' };
+        if (value <= thresholds[0]) return { label: '좋음', className: 'grade-good' };
+        if (value <= thresholds[1]) return { label: '보통', className: 'grade-normal' };
+        if (value <= thresholds[2]) return { label: '나쁨', className: 'grade-bad' };
+        return { label: '매우나쁨', className: 'grade-verybad' };
+    }
+
     // 주요 도시 21곳의 좌표 폴백 목록
     //  - 지오코딩 API 호출 없이 바로 좌표를 찾아 응답 속도/정확도를 높임
     const FALLBACK_CITIES = {
@@ -138,7 +151,12 @@ $(function () {
     // ----------------------------------------
     // Open-Meteo Forecast API 호출
     // ----------------------------------------
+    let requestSeq = 0; // 날씨 정보를 불러오기 위한 요청 번호
+
     function loadWeather(lat, lon, displayName) {
+        requestSeq++;
+        const seq = requestSeq;
+
         showStatus("날씨 정보를 불러오는 중입니다...");
 
         $.getJSON("https://api.open-meteo.com/v1/forecast", {
@@ -151,6 +169,10 @@ $(function () {
             timezone:"auto"
         })
         .done(function(data) { 
+            // 현재 요청 번호와 최신 요청 번호가 다르면 
+            // 현재 요청 번호가 최신이 아니기 때문에 무시
+            if(seq !== requestSeq) return;
+
             // 정상적으로 불러온 경우
             renderWeather(data, displayName);
             renderHourly(data);
@@ -158,8 +180,11 @@ $(function () {
         })
         .fail(function() { 
             // 불어오기가 실패한 경우
+            if(seq !== requestSeq) return;
             showError("날씨 정보를 가져오지 못했습니다. 잠시후 다시 시도해주세요.");
-        })
+        });
+
+        loadAirQuality(lat, lon, seq);
     }
 
     function renderWeather(data, displayName) {
@@ -376,6 +401,7 @@ $(function () {
                 })
                 .done(function(res) { 
                     renderMyLocation(res, lat, lon);
+                    loadMyAirQuality(lat, lon);
                 })
                 .fail(function() {  $("#myLocation").html("<p class='my-location-msg'>내 위치 날씨를 불러오지 못했습니다.</p>");});
             },
@@ -391,7 +417,7 @@ $(function () {
 
 
         $("#myLocation").html(
-            `<div class="current-card my-location-card data-name="📍 내 위치" data-lat="${lat}" data-lon="${lon}">
+            `<div class="current-card my-location-card" data-name="📍 내 위치" data-lat="${lat}" data-lon="${lon}">
                 <div class="current-content">
                     <h2 class="location">📍 내 위치</h2>
                     <p class="updated">${cur.time.replace("T", " ") + "기준"}</p>
@@ -428,9 +454,9 @@ $(function () {
                     </div>
 
                     <!-- 미세먼지/초미세먼지 정보 -->
-                    <div id="airInfo" class="air-info">
-                        <div class="air-badge grade-good">미세먼지 -</div>
-                        <div class="air-badge grade-bad">초미세먼지 -</div>
+                    <div class="air-info">
+                        <div id="myPm10Badge" class="air-badge">미세먼지 -</div>
+                        <div id="myPm25Badge" class="air-badge">초미세먼지 -</div>
                     </div>
                 </div>
             </div>`
@@ -438,7 +464,59 @@ $(function () {
 
     }
 
+    function loadMyAirQuality(lat, lon) {
+        $("#myPm10Badge").text("미세먼지 확인 중").removeClass().addClass("air-badge");
+        $("#myPm25Badge").text("초미세먼지 확인 중").removeClass().addClass("air-badge");
+        $.getJSON("https://air-quality-api.open-meteo.com/v1/air-quality", {
+            latitude:lat,
+            longitude:lon,
+            current:"pm10,pm2_5",
+            timezone:"auto"
+        })
+        .done(function(data) { 
+            const pm10Grade = pmGrade(data.current.pm10, PM10_THRESHOLDS);
+            const pm25Grade = pmGrade(data.current.pm2_5, PM25_THRESHOLDS);
+            $("#myPm10Badge").text("미세먼지 " + pm10Grade.label).addClass(pm10Grade.className);
+            $("#myPm25Badge").text("초미세먼지 " + pm25Grade.label).addClass(pm25Grade.className);
+        })
+        .fail(function() {
+            $("#myPm10Badge").text("미세먼지 정보 없음");
+            $("#myPm25Badge").text("초미세먼지 정보 없음");
+        });
+    }
+
+    // 대기질 정보 탐색
+    function loadAirQuality(lat, lon, seq) {
+        $("#pm10Badge").text("미세먼지 확인 중").removeClass().addClass("air-badge");
+        $("#pm25Badge").text("초미세먼지 확인 중").removeClass().addClass("air-badge");
+
+        $.getJSON("https://air-quality-api.open-meteo.com/v1/air-quality", {
+            latitude:lat,
+            longitude:lon,
+            current:"pm10,pm2_5",
+            timezone:"auto"
+        })
+        .done(function(data) { 
+            if(seq !== requestSeq) return;
+
+            const pm10Grade = pmGrade(data.current.pm10, PM10_THRESHOLDS);
+            const pm25Grade = pmGrade(data.current.pm2_5, PM25_THRESHOLDS);
+
+            $("#pm10Badge").text("미세먼지 " + pm10Grade.label).addClass(pm10Grade.className);
+            $("#pm25Badge").text("초미세먼지 " + pm25Grade.label).addClass(pm25Grade.className);
+
+        })
+        .fail(function() {
+            if(seq !== requestSeq) return;
+
+            $("#pm10Badge").text("미세먼지 정보 없음");
+            $("#pm25Badge").text("초미세먼지 정보 없음");
+        });
+
+    }
+
     
+
     // ----------------------------------------
     // 데이터 로딩 완료
     //  - 상태 메세지 숨기기
@@ -506,8 +584,8 @@ $(function () {
         loadMyLocation();
     });
 
-    // 도시 리스트 행/최고최저 기온 카드 → 상세 화면
-    $(".page-content").on("click", ".city-row, .extream-card", function() {
+    // 도시 리스트 행/최고최저 기온 카드/내 위치 카드 → 상세 화면
+    $(".page-content").on("click", ".city-row, .extream-card, .my-location-card", function() {
         const btn = $(this);
         openDetail(btn.data("lat"), btn.data("lon"), btn.data("name"));
     });
