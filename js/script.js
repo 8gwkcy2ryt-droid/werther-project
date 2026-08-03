@@ -220,20 +220,16 @@ $(function () {
             $("#hotCity .extream-value")
                 .html(hotName + " " + safeRound(results[hotIdx].daily.temperature_2m_max[0]) + "°");
                 
-                
             $("#coldCity")
                 .data({name: coldName, lat:coldCity.lat, lon:coldCity.lon})
                 .find(".extream-value")
                 .html(coldName + " " + safeRound(results[coldIdx].daily.temperature_2m_min[0]) + "°");
-
-
-
         })
         .fail(function() { a
             alert("주요 도시 날씨를 불러오지 못했습니다.")
         });
     }
-    loadCityList();
+    
 
     // ----------------------------------------
     // 받아온 데이터 화면에 표시
@@ -258,6 +254,7 @@ $(function () {
         $('#precipProb').text(safeRound(data.daily.precipitation_probability_max[0], '%'));
         $('#sunriseTime').text(formatClock(data.daily.sunrise[0]));
         $('#sunsetTime').text(formatClock(data.daily.sunset[0]));
+
 
         // 5일 예보 카드를 반복문으로 조립하여 #forecastRow 에 한 번에 작성
         const WEEKDAY = ["일", "월", "화", "수", "목", "금", "토"];
@@ -370,6 +367,22 @@ $(function () {
         $("#panel-hourly").prop("hidden", activeTab !== "hourly");
     }
 
+    //-----------------------------------------
+    // 도시 이름 검색
+    //  - 폴백 목록에 있으면 목록에서 반환(빠른 검색)
+    //  - 없으면 Open-Meteo Geocoding API 로 검색
+    //-----------------------------------------
+    function searchCity(rawQuery) {
+        const query = $.trim(rawQuery); // 앞뒤 공백을 제거한 검색한 값
+        if(!query) return;
+
+        if(FALLBACK_CITIES[query]) {
+            const c = FALLBACK_CITIES[query];
+            $("#cityInput").val("");    // 입력 요소의 입력 값 지우기
+            openDetail(c.lat, c.lon, query);
+            return;
+        }
+    }
 
     // ----------------------------------------
     // 이벤트 연결
@@ -377,13 +390,20 @@ $(function () {
     // 검색 기능
     $("#searchForm").on("submit", function(e) {
         e.preventDefault();
+        searchCity($("#cityInput").val());
+    });
+
+    // 도시 리스트 행/최고최저 기온 카드 → 상세 화면
+    $(".page-content").on("click", ".city-row, .extream-card", function() {
+        const btn = $(this);
+        openDetail(btn.data("lat"), btn.data("lon"), btn.data("name"));
     });
 
     // 뒤로가기: 상세 화면 → 홈 전환
     $("#backBtn").on("click", function() {
         showScreen("home");
         // 도시별 날씨 리스트 표시
-
+        loadCityList();
     });
 
     // 탭 전환(주간 날씨(summary) ↔ 시간별 날씨(hourly))
@@ -408,5 +428,5 @@ $(function () {
 
     // 첫 화면 홈으로 표시
     showScreen("home");
-
+    loadCityList();
 });
